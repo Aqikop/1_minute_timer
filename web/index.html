@@ -1,14 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Microsoft Cognitive Services Speech SDK JavaScript Quickstart</title>
+  <title>Timer set up with spoken feedback</title>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="trang_tri.css">
 </head>
 <body>
+
+  <div class="hover_key">
   <div class="ms-header">
     <h1>Azure Speech Timer</h1>
+  </div>
+  <div class="small_container">
+    <div class="ms-form-group" style="display: inline-block;">
+      <label for="subscriptionKey">Subscription Key:</label>
+      <input id="subscriptionKey" class="ms-form-control" type="password" value="" placeholder="Subscription Key">
+    </div>
+    <div class="ms-form-group" style="display: inline-block;">
+      <label for="serviceRegion">Region:</label>
+      <input id="serviceRegion" class="ms-form-control" type="text" value="" placeholder="Region">
+    </div>
+  </div>
   </div>
 
   <div id="warning" class="ms-container">
@@ -17,40 +30,42 @@
       <p>Please ensure that microsoft.cognitiveservices.speech.sdk.bundle.js is properly loaded.</p>
     </div>
   </div>
-  
-  <div id="content" class="ms-container" style="display:none">
+
+  <div class="big_container">
+  <div class="left_side">
+  <div id="content" class="ms-container">
     <div class="ms-section">
-      <div class="ms-form-group" style="display: none;">
-        <label for="subscriptionKey">Subscription Key:</label>
-        <input id="subscriptionKey" class="ms-form-control" type="text" value="">
-      </div>
-      <div class="ms-form-group" style="display: none;">
-        <label for="serviceRegion">Region:</label>
-        <input id="serviceRegion" class="ms-form-control" type="text" value="">
-      </div>
       <div class="ms-form-group">
-        <label>&nbsp;</label>
+        <!-- <label>&nbsp;</label> -->
         <button id="startRecognizeOnceAsyncButton" class="ms-button">Start recognition</button>
+              <!-- icon -->
+        <br/>
+        <img src="icon.gif" class="icon" style="display: none;"/>
       </div>
+
       <div class="ms-form-group">
         <label for="phraseDiv">Recognition Results:</label>
+        <img src="user.png" class="icon_user" style="display: none;"/>
         <textarea id="phraseDiv" class="ms-form-control" readonly></textarea>
       </div>
       <div class="ms-form-group">
         <label for="setTimer">Timer Message:</label>
+        <img src="user-robot.png" class="icon_user" style="display: none;"/>
         <textarea id="setTimer" class="ms-form-control" readonly></textarea>
       </div>
     </div>
+  </div>
+  </div>
 
-    <div class="ms-section timer-container">
-      <h2>Active Timers</h2>
-      <!-- <div class="delete-all-container">
-        <button class="ms-button ms-button-danger" onclick="deleteAllTimers()">Delete All Timers</button>
-      </div> -->
-      <ul class="timer-list" id="timer-list">
-        <!-- Timers will appear here -->
-      </ul>
-    </div>
+  <div class="ms-section timer-container right_side">
+    <h2>Active Timers</h2>
+    <!-- <div class="delete-all-container">
+      <button class="ms-button ms-button-danger" onclick="deleteAllTimers()">Delete All Timers</button>
+    </div> -->
+    <ul class="timer-list" id="timer-list">
+      <!-- Timers will appear here -->
+    </ul>
+  </div>
   </div>
 
 
@@ -152,7 +167,6 @@
               console.log("Total seconds:", total_seconds);
               console.log("Message:", message);
 
-              // With better error handling
               if (data.index) {
                   index = data.index;
                   console.log("Received index data:", index);
@@ -191,7 +205,8 @@
                         const lastTimerId = timers[timers.length - 1].id;
                         deleteTimer(lastTimerId);
                       }
-
+                      
+                      // Delete timer based on the index
                       if (index.length > 0 && index[0] != -1 && timers.length > 0) {
                         const sortIndex = [...index].sort((a, b) => a - b);
                         sortIndex.forEach(idx =>{
@@ -200,65 +215,57 @@
                           }
                         })
                       }
-
+                      // Delete timer based on the name (value)
                       if (timer_names.length > 0 && timers.length > 0) {
                         try {
-                          // Log intent for Azure diagnostics
                           console.log("Processing timer deletion by names:", timer_names);
                           
-                          timer_names.forEach(name => {
-                            let timer = null;
+                          // Create a copy of the array and sort in DESCENDING order to prevent index shifting issues
+                          const sortedNames = [...timer_names].sort((a, b) => {
+                            const posA = parseInt(a) - 1;
+                            const posB = parseInt(b) - 1;
+                            // Sort non-numbers to the end
+                            if (isNaN(posA)) return 1;
+                            if (isNaN(posB)) return -1;
+                            // Sort in descending order
+                            return posB - posA;
+                          });
+                          
+                          // Process in the sorted order (higher indices first)
+                          sortedNames.forEach(name => {
+                            // Extract timer position (1-based to 0-based)
+                            const timerPosition = parseInt(name) - 1;
                             
-                            // Try method 1: Direct domId match
-                            timer = timers.find(t => t.domId === name);
-                            
-                            // Try method 2: Position-based match
-                            if (!timer) {
-                              const timerPosition = parseInt(name) - 1;
-                              if (!isNaN(timerPosition) && timerPosition >= 0 && timerPosition < timers.length) {
-                                console.log(`Found timer by position: ${timerPosition+1}`);
-                                timer = timers[timerPosition];
-                              }
-                            }
-                            
-                            // Try method 3: Extract ID from timer name pattern
-                            if (!timer && typeof name === 'string') {
-                              const domIdMatch = name.match(/timer-(\d+)/);
-                              if (domIdMatch && domIdMatch[1]) {
-                                const idNumber = parseInt(domIdMatch[1]);
-                                timer = timers.find(t => t.id === idNumber);
-                                if (timer) {
-                                  console.log(`Found timer by extracted ID: ${idNumber}`);
-                                }
-                              }
-                            }
-                            
-                            // Delete the timer if found
-                            if (timer) {
-                              console.log(`Deleting timer: ${timer.domId} with ID: ${timer.id}`);
-                              deleteTimer(timer.id);
-                            } else {
-                              console.warn(`Timer not found with identifier: "${name}"`);
+                            // Comprehensive validation
+                            if (!isNaN(timerPosition) && timerPosition >= 0 && timerPosition < timers.length) {
+                              const timer = timers[timerPosition];
+                              console.log(`Found timer by position: ${timerPosition+1}, ID: ${timer.id}`);
                               
-                              // Azure best practice: Show all available timers for debugging
-                              if (timers.length > 0) {
-                                console.log("Available timers:", timers.map(t => ({id: t.id, domId: t.domId})));
-                              }
+                              // Store information before deletion
+                              const timerInfo = {
+                                id: timer.id,
+                                position: timerPosition + 1,
+                                domId: timer.domId
+                              };
+                              
+                              // Delete the timer
+                              deleteTimer(timer.id);
+                              
+                              console.log(`Successfully deleted timer with position ${timerInfo.position}, ID: ${timerInfo.id}`);
+                            } else {
+                              console.warn(`Invalid timer position: ${name} (parsed as index ${timerPosition})`);
+                              console.log(`Current timer count: ${timers.length}`);
                             }
                           });
                         } catch (error) {
                           console.error("Error deleting timers by name:", error);
                         }
-                      }
+                      } 
                     }
                     // Delete all timers
                     const words = ['all', 'every'];
                     if (message && words.some(word => message.toLowerCase().includes(word))) {
                       deleteAllTimers();
-                    }
-
-                    if(index.length > 0 || timer_names.length > 0){
-                      
                     }
                   },
                   function(error) {
@@ -268,6 +275,7 @@
               } else {
                 console.log("No valid text to synthesize.");
               }
+              
             })
             .catch(error => {
               console.error("Error:", error);
@@ -296,11 +304,11 @@
       }
     });
     
-    // Timer management with Azure best practices for reliable client applications
+    // Timer management
     let timerId = 0;
     const timers = []; // Keep track of timers and their intervals
 
-    // Function to add a new timer to the list
+    // Function to add a new timer 
     function addTimer(timeInSeconds) {
       if (isNaN(timeInSeconds) || timeInSeconds <= 0) {
         console.error("Invalid timer value:", timeInSeconds);
@@ -320,7 +328,7 @@
 
       timerItem.innerHTML = `
           <div>
-              <h3>Timer ${newTimerId + 1}</h3>
+              <h3>Timer</h3>
               <div class="time" id="time-${newTimerId}">${pad(minutes)}:${pad(seconds)}</div>
           </div>
       `;
@@ -386,7 +394,6 @@
                       // Create a speech config specifically for this timer announcement
                       let timerSpeechConfig = SpeechSDK.SpeechConfig.fromSubscription(subKey, region);
                       
-                      // Use the compact function for timer expiration announcement
                       speakText(
                         announcement,
                         timerSpeechConfig,
@@ -406,7 +413,7 @@
       }, 1000);
     }
 
-    // Function to delete timer - improved with proper error handling
+    // Function to delete timer 
     function deleteTimer(id) {
       // Find timer by ID in the array
       const timerIndex = timers.findIndex(t => t.id === id);
@@ -467,6 +474,23 @@
     function pad(value) {
         return value < 10 ? '0' + value : value;
     }
+
+
+    // function thêm timer
+    function addManualTimer() {
+    const minutes = parseInt(document.getElementById('minutes').value) || 0;
+    const seconds = parseInt(document.getElementById('seconds').value) || 0;
+    const totalSeconds = (minutes * 60) + seconds;
+    
+    if (totalSeconds > 0) {
+        addTimer(totalSeconds);
+        // Clear inputs after adding timer
+        document.getElementById('minutes').value = '';
+        document.getElementById('seconds').value = '';
+    } else {
+        alert('Please enter a valid time');
+    }
+}
   </script>
 </body>
 </html>

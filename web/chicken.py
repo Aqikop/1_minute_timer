@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
+import random
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -11,10 +12,16 @@ def get_timer_time(text):
     body = {'text': text}
 
     response = requests.post(url, json=body)
-    #print(f"Response status: {response.status_code}, Response body: {response.text}")
+    print(f"Response status: {response.status_code}, Response body: {response.text}")
 
     if response.status_code != 200:
-        return 0
+        payload = {
+            'seconds' : 0,
+            'index' : [],
+            'timer_names': [],
+            'message' : 'Did not recognize intent, please try again.'
+        }
+        return payload
     
     payload = response.json()
     return payload #return payload a list [total_seconds:int, message:str]
@@ -30,6 +37,7 @@ def create_timer(total_seconds):
     else:
         timer_message = (f"Timer started for {seconds} seconds")
     
+    print(timer_message)
     return timer_message
 
 @app.route('/process_text', methods=['POST'])
@@ -38,22 +46,16 @@ def process_text():
     data = request.json
     text = data.get('text', '')
     
-    if text == "":
-        response = {
-            "timerMessage" : "No valid text to synthesize. Please try again."
-        }
-        return jsonify(response)
-    
     if text != "":
         timer_message = ''
         index = []
         timer_names = []
         
         response_data= get_timer_time(text)
-        #print(response_data)
+        print(response_data)
         
-        #print(f"Processing text: {text}")
-        seconds = response_data['seconds'] 
+        print(f"Processing text: {text}")
+        seconds = response_data['seconds']
         if seconds > 0:
             timer_message = create_timer(seconds)
         elif seconds == 0:

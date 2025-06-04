@@ -1,0 +1,231 @@
+:root {
+  /* Azure color palette */
+  --azure-blue: #0078d4;
+  --azure-dark-blue: #106ebe;
+  --azure-light-blue: #c7e0f4;
+  --azure-background: #f8f8f8;
+  --azure-text: #323130;
+  --azure-light-grey: #f3f2f1;
+  --azure-border: #edebe9;
+  --azure-success: #107c10;
+  --azure-warning: #d83b01;
+  --font-family: 'Montserrat', 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+  --color-green: #76ABAE;
+  --color-darkblue: #222831;
+  --color-white: #F3F3E0;
+  --color-blue: #27548A;
+  --color-darkgreen: #183B4E;
+  --color-yellow: #DDA853;
+  --color-gray: #606E6C;
+
+}
+body {
+    font-family: var(--font-family);
+    background-color: var(--color-white);
+}
+
+.ms-header {
+    display: block;
+    text-align: center;
+    /* margin-bottom: 20px; */
+    padding: 30px 0 0;
+    color: var(--color-darkblue);
+    font-family: var(--font-family);
+    font-size: 20px;
+    font-weight: 900;
+    width: 50%;
+    margin: 0 auto;
+}
+
+.small_container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 25%;
+    padding: 10px;
+    margin: 0 auto;
+    
+    background-color: var(--color-darkblue);
+    text-align: center;
+
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+    border-radius: 10px;
+}
+
+.small_container input {
+    color: var(--color-darkblue);
+    font-weight: 500;
+    width: 90%;
+}
+
+/* hover trên h1 để hiện key */
+.hover_key:hover  .small_container {
+    display: flex;
+}
+
+/* cái này phải bọc lại với div class = big_container*/
+.big_container {
+    display: flex;
+    justify-content: space-between;
+    min-height: 500px;
+}
+
+.left_side {
+    display: inline-block;
+    position: relative;
+    width: 48%;     
+    text-align: center;
+    background-color: var(--color-green);
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+    margin: 5% 2% 0;
+    border-radius: 10px;
+
+
+}
+
+.ms-form-group label {
+    display: none !important;
+}
+
+.right_side {
+    display: inline-block;
+    width: 48%;
+    text-align: center;
+    background-color: var(--color-green);
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+    margin: 5% 2% 0;
+    border-radius: 10px;
+}
+
+/* button */
+.ms-button {
+    height: 100px;
+    width: 100px;
+    background-color: var(--color-darkblue);
+    color: var(--color-yellow);
+    border-radius: 2px;
+    cursor: pointer;
+    font-family: var(--font-family);
+    font-weight: bold;
+    justify-content: center;
+    border: none;
+    border-radius: 20px;
+    text-align: center;
+    margin: 10% 0 5%;
+    
+}
+
+.icon {
+    display: none;
+    height: 96px;
+    width: 100px;
+    margin: 10% 0 5%;
+}
+
+.icon_user {
+    display: inline-flex !important; 
+    height: 30px;
+    width: 30px;
+    padding-bottom: 25px;
+}
+
+.ms-button:hover {
+  background-color: #191e25;
+}
+
+.ms-button:disabled {
+  background-color: var(--azure-light-grey);
+  color: #a19f9d;
+  cursor: not-allowed;
+  display: none !important;
+}
+
+.ms-button:disabled ~ .icon{
+    display: inline !important;
+    cursor: not-allowed;
+}
+
+/* bỏ hiển thị cái br trong html */
+.ms-button:disabled ~ br {
+    display: none !important;
+}
+
+.ms-button-danger {
+  background-color: var(--azure-warning);
+}
+
+.ms-button-danger:hover {
+  background-color: #a83200;
+}
+
+.ms-form-control {
+    display: inline-block;
+    color: var(--color-white);
+    width: 70%;
+    font-family: var(--font-family);
+    font-size: 100%;
+    font-weight: lighter;
+    height: auto;
+    /* edit khung */
+    resize: none;
+    outline: none;
+    border-radius: 20px;
+    border: none;
+    padding: 10px 15px;
+    margin: 10px 0;
+}
+
+#phraseDiv {
+    background: var(--color-darkgreen);
+}
+
+#setTimer {
+    background: var(--color-darkblue);
+
+}
+/* active timer */
+h2 {
+    color: var(--color-white);
+}
+
+/* Timer styles */
+.timer-list {
+    display: inline-block;
+    list-style-type: none;
+    padding: 0;
+    margin-left: 10px;
+    overflow: auto;
+    height: 300px;
+    width: 80%;
+    text-align: center;
+}
+
+/* bao gồm tên và thời gian */
+.timer-item {
+    background-color: var(--color-darkgreen);
+    border-radius: 20px;
+    margin-top: 5px;
+
+}
+
+/* tên */
+h3 {
+    background-color: var(--color-darkblue);
+    color: var(--color-yellow);
+    padding: 10px 0;
+    border-radius: 20px 20px 0 0;
+    margin: 0;
+}
+
+/* thời gian */
+.time{
+    color: var(--color-white);
+    padding: 10px;
+    padding: 20px 0;
+    border-radius: 5px;
+    font-size: 25px;
+    font-weight: bolder;
+    border-radius: 20px;
+}
